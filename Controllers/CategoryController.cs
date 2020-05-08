@@ -14,7 +14,7 @@ namespace shop.Controllers
         [HttpGet]
         [Route("")]
         public async Task<ActionResult<List<Category>>> Get(
-            [FromServices]DataContext context
+            [FromServices] DataContext context
         )
         {
             var categories = await context.Categories.AsNoTracking().ToListAsync();
@@ -28,8 +28,8 @@ namespace shop.Controllers
         [HttpGet]
         [Route("{id:int}")]
         public async Task<ActionResult<Category>> GetById(
-            int id,
-            [FromServices]DataContext context
+            [FromServices] DataContext context,
+            int id
         )
         {
             var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
@@ -43,8 +43,8 @@ namespace shop.Controllers
         [HttpPost]
         [Route("")]
         public async Task<ActionResult<List<Category>>> Post(
-            [FromBody]Category model,
-            [FromServices] DataContext context
+            [FromServices] DataContext context,
+            [FromBody] Category model
         )
         {
             if (!ModelState.IsValid)
@@ -66,9 +66,10 @@ namespace shop.Controllers
         [HttpPut]
         [Route("{id:int}")]
         public async Task<ActionResult<List<Category>>> Put(
-            int id,
-            [FromBody]Category model,
-            [FromServices]DataContext context)
+            [FromServices] DataContext context,
+            [FromBody] Category model,
+            int id
+        )
         {
             // Verifica se o ID informado é o mesmo do modelo
             if (id != model.Id)
@@ -82,6 +83,7 @@ namespace shop.Controllers
             {
                 context.Entry<Category>(model).State = EntityState.Modified;
                 await context.SaveChangesAsync();
+
                 return Ok(model);
             }
             catch (DbUpdateConcurrencyException)
@@ -97,11 +99,12 @@ namespace shop.Controllers
         [HttpDelete]
         [Route("{id:int}")]
         public async Task<ActionResult<List<Category>>> Delete(
-            int id,
-            [FromServices]DataContext context
+            [FromServices] DataContext context,
+            int id
         )
         {
             var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+
             if (category == null)
                 return NotFound(new { message = "Categoria não encontrada" });
 
@@ -109,6 +112,7 @@ namespace shop.Controllers
             {
                 context.Categories.Remove(category);
                 await context.SaveChangesAsync();
+
                 return Ok(category);
             }
             catch (Exception)
